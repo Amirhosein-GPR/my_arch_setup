@@ -1,0 +1,33 @@
+theme = "onedark"
+
+[editor]
+bufferline = "always"
+end-of-line-diagnostics = "hint"
+cursorline = true
+# line-number = "relative"
+
+[editor.soft-wrap]
+enable = true
+
+[editor.inline-diagnostics]
+cursor-line = "error"
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.indent-guides]
+render = true
+
+[editor.lsp]
+display-messages = true
+display-inlay-hints = true
+display-progress-messages = true
+
+[keys.normal]
+"space".q = ":q"
+"space".m = ":w"
+"space".t = ":toggle lsp.display-inlay-hints"
+"space".u = [":config-reload"]
+"space".i = "signature_help"

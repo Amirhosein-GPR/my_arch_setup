@@ -1,0 +1,15 @@
+[[language]]
+name = "typst"
+auto-format = true
+
+# [editor.auto-save.after-delay]
+# enable = true
+# timeout = 300
+
+#[editor.auto-save]
+#focus-lost = true
+
+[language-server.tinymist]
+command = "tinymist"
+config = { formatterMode = "typstyle" }
+# config = {formatterMode = "typstyle", typstExtraArgs = ["main.typ"]}
