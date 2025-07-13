@@ -1,5 +1,7 @@
 #!/bin/bash
 
+VERSION="v0.1.1" 
+
 declare -A config
 
 # Packages Constants
@@ -8,7 +10,7 @@ config["ext_pkg_gpu_types"]="vulkan-radeon vulkan-intel nvidia"
 config["ext_pkg_dual_os"]="os-prober"
 config["ext_pkg_uefi"]="efibootmgr"
 config["base_packages"]="base linux linux-firmware sudo grub dosfstools mtools helix networkmanager git base-devel cliphist unrar 7zip noto-fonts-emoji ttf-jetbrains-mono-nerd zsh zsh-autosuggestions zsh-syntax-highlighting starship aria2 ssh-tools"
-config["useful_packages"]="vlc telegram-desktop thunderbird rhythmbox visual-studio-code-bin"
+config["useful_packages"]="vlc telegram-desktop thunderbird rhythmbox visual-studio-code-bin libreoffice-fresh"
 config["kde_desktop_environment_packages"]="sddm breeze breeze-gtk breeze-plymouth drkonqi kde-gtk-config kgamma kinfocenter kmenuedit kpipewire kscreen kscreenlocker ksystemstats kwin libkscreen libksysguard ocean-sound-theme plasma-desktop plasma-disks plasma-firewall plasma-nm plasma-pa plasma-systemmonitor plasma-workspace plasma-workspace-wallpapers plymouth-kcm polkit-kde-agent powerdevil print-manager sddm-kcm systemsettings ark dolphin elisa ffmpegthumbs gwenview kamera kcalc kclock kdeconnect konsole okular partitionmanager spectacle"
 config["gnome_desktop_environment_packages"]=""
 config["xfce_desktop_environment_packages"]=""
@@ -186,7 +188,7 @@ config_pacman() {
     sed -i -e "s/#Color/Color/" "$saving_path" -e "s/#VerbosePkgLists/VerbosePkgLists\nILoveCandy/" "$saving_path"
 }
 
-printf "\nArch Linux Setup - v0.1.0\n"
+printf "\nArch Linux Setup - $VERSION\n"
 
 load_checkpoint
 
