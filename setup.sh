@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="v0.1.3" 
+VERSION="v0.1.4" 
 
 declare -A config
 
@@ -492,8 +492,8 @@ while [[ true ]]; do
             arch-chroot -u "${config["username"]}" /mnt chsh -s $(which zsh)
             arch-chroot "${config["username"]}" /mnt chsh -s $(which zsh)
 
-            cp ./backup/dot_files/* /mnt/home/"${config["username"]}"/
-            cp ./backup/dot_files/* /mnt/root/
+            cp -r ./backup/dot_files/. /mnt/home/"${config["username"]}"/
+            cp -r ./backup/dot_files/. /mnt/root/
             ;;
         25)
             print_title "Optional Step (Printer & Wifi Driver Installation)"
