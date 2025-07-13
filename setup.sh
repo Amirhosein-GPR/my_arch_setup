@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="v0.1.4" 
+VERSION="v0.1.5" 
 
 declare -A config
 
@@ -490,7 +490,7 @@ while [[ true ]]; do
             print_title "Changing The Shell & Restoring Configurations (ZSH, KDE Settings)"
 
             arch-chroot -u "${config["username"]}" /mnt chsh -s $(which zsh)
-            arch-chroot "${config["username"]}" /mnt chsh -s $(which zsh)
+            arch-chroot /mnt chsh -s $(which zsh)
 
             cp -r ./backup/dot_files/. /mnt/home/"${config["username"]}"/
             cp -r ./backup/dot_files/. /mnt/root/
