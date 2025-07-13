@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="v0.1.2" 
+VERSION="v0.1.3" 
 
 declare -A config
 
@@ -539,6 +539,28 @@ while [[ true ]]; do
             fi
             ;;
         26)
+            answer="$(question_boolean "Do You Want To Install Optimus Manager? (y/n): ")"
+            if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
+                arch-chroot /mnt paru -Syu optimus-manager
+
+                if [[ $? -ne 0 ]]; then
+                    break
+                fi
+
+                case "${config["desktop_environment"]}" in
+                KDE)
+                    arch-chroot /mnt paru -Syu optimus-manager-qt
+                    ;;
+                GNOME)
+                    ;;
+                XFCE)
+                    ;;
+                HYPRLAND)
+                    ;;
+                esac
+            fi
+            ;;
+        27)
             print_title "Installing Some Useful Applications"
             
             arch-chroot /mnt paru -Syu ${config["useful_packages"]} 
@@ -579,7 +601,7 @@ while [[ true ]]; do
 
             arch-chroot -u "${config["username"]}" /mnt curl "https://github.com/bepass-org/oblivion-desktop/releases/latest/download/oblivion-desktop-linux-x86_64.AppImage" -o "/home/"${config["username"]}"/Applications/oblivion-desktop-linux-x86_64.AppImage"
             ;;
-        27)
+        28)
             print_title "Installation Finished!"
 
             umount -l /mnt
