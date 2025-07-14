@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="v0.1.8" 
+VERSION="v0.1.9" 
 
 declare -A config
 
@@ -9,7 +9,7 @@ config["ext_pkg_cpu_types"]="amd-ucode intel-ucode"
 config["ext_pkg_gpu_types"]="vulkan-radeon vulkan-intel nvidia"
 config["ext_pkg_dual_os"]="os-prober"
 config["ext_pkg_uefi"]="efibootmgr"
-config["base_packages"]="base linux linux-firmware sudo grub dosfstools mtools helix networkmanager git base-devel cliphist unrar 7zip noto-fonts-emoji ttf-jetbrains-mono-nerd zsh zsh-autosuggestions zsh-syntax-highlighting starship aria2 ssh-tools rustup power-profiles-daemon"
+config["base_packages"]="base linux linux-firmware sudo grub dosfstools mtools helix networkmanager git base-devel cliphist unrar 7zip noto-fonts-emoji ttf-jetbrains-mono-nerd zsh zsh-autosuggestions zsh-syntax-highlighting starship aria2 ssh-tools rustup power-profiles-daemon fuse"
 config["useful_packages"]="vlc telegram-desktop thunderbird rhythmbox libreoffice-fresh"
 config["kde_desktop_environment_packages"]="sddm breeze breeze-gtk breeze-plymouth drkonqi kde-gtk-config kgamma kinfocenter kmenuedit kpipewire kscreen kscreenlocker ksystemstats kwin libkscreen libksysguard ocean-sound-theme plasma-desktop plasma-disks plasma-firewall plasma-nm plasma-pa plasma-systemmonitor plasma-workspace plasma-workspace-wallpapers plymouth-kcm polkit-kde-agent powerdevil print-manager sddm-kcm systemsettings ark dolphin elisa ffmpegthumbs gwenview kamera kcalc kclock kdeconnect konsole okular partitionmanager spectacle"
 config["gnome_desktop_environment_packages"]=""
