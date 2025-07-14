@@ -518,6 +518,7 @@ while [[ true ]]; do
 cd /home/"${config["username"]}"/Desktop/rtl8821ce
 sudo ./dkms-remove.sh
 sudo ./dkms-install.sh
+cd ..
 sudo rm -r /home/"${config["username"]}"/Desktop/rtl8821ce                
 echo "blacklist rtw88_8821ce" | sudo tee /etc/modprobe.d/blacklist.conf
 EOF
