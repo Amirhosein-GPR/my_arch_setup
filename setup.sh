@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="v0.1.5" 
+VERSION="v0.1.6" 
 
 declare -A config
 
@@ -9,8 +9,8 @@ config["ext_pkg_cpu_types"]="amd-ucode intel-ucode"
 config["ext_pkg_gpu_types"]="vulkan-radeon vulkan-intel nvidia"
 config["ext_pkg_dual_os"]="os-prober"
 config["ext_pkg_uefi"]="efibootmgr"
-config["base_packages"]="base linux linux-firmware sudo grub dosfstools mtools helix networkmanager git base-devel cliphist unrar 7zip noto-fonts-emoji ttf-jetbrains-mono-nerd zsh zsh-autosuggestions zsh-syntax-highlighting starship aria2 ssh-tools rustup"
-config["useful_packages"]="vlc telegram-desktop thunderbird rhythmbox visual-studio-code-bin libreoffice-fresh"
+config["base_packages"]="base linux linux-firmware sudo grub dosfstools mtools helix networkmanager git base-devel cliphist unrar 7zip noto-fonts-emoji ttf-jetbrains-mono-nerd zsh zsh-autosuggestions zsh-syntax-highlighting starship aria2 ssh-tools rustup power-profiles-daemon"
+config["useful_packages"]="vlc telegram-desktop thunderbird rhythmbox libreoffice-fresh"
 config["kde_desktop_environment_packages"]="sddm breeze breeze-gtk breeze-plymouth drkonqi kde-gtk-config kgamma kinfocenter kmenuedit kpipewire kscreen kscreenlocker ksystemstats kwin libkscreen libksysguard ocean-sound-theme plasma-desktop plasma-disks plasma-firewall plasma-nm plasma-pa plasma-systemmonitor plasma-workspace plasma-workspace-wallpapers plymouth-kcm polkit-kde-agent powerdevil print-manager sddm-kcm systemsettings ark dolphin elisa ffmpegthumbs gwenview kamera kcalc kclock kdeconnect konsole okular partitionmanager spectacle"
 config["gnome_desktop_environment_packages"]=""
 config["xfce_desktop_environment_packages"]=""
@@ -494,62 +494,57 @@ while [[ true ]]; do
 
             cp -r ./backup/dot_files/. /mnt/home/"${config["username"]}"/
             cp -r ./backup/dot_files/. /mnt/root/
+	    chown -R 1000:1000 "/mnt/home/${config["username"]}"
             ;;
         25)
             print_title "Optional Step (Printer & Wifi Driver Installation)"
 
             answer="$(question_boolean "Do You Want To Install RTL8821CE Driver? (y/n): ")"
             if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
-                arch-chroot /mnt pacman -Syu linux-headers dkms bc
+                arch-chroot /mnt sudo pacman -Syu linux-headers dkms bc --needed
 
                 if [[ $? -ne 0 ]]; then
                     break
                 fi
 
-                arch-chroot -u "${config["username"]}" /mnt git clone https://github.com/tomaspinho/rtl8821ce.git /home/"${config["username"]}"/rtl8821ce
+                arch-chroot -u "${config["username"]}" /mnt git clone https://github.com/tomaspinho/rtl8821ce.git /home/"${config["username"]}"/Desktop/rtl8821ce
 
                 if [[ $? -ne 0 ]]; then
                     break
                 fi
 
-                arch-chroot -u "${config["username"]}" /mnt bash -c "cd /home/"${config["username"]}"/rtl8821ce && ./dkms-install.sh"
+                cat << EOF > /mnt/home/"${config["username"]}"/Desktop/post_installation_script.sh
+#!/bin/bash
+cd /home/"${config["username"]}"/Desktop/rtl8821ce
+./dkms-remove.sh
+./dkms-install.sh
+sudo rm -r /home/"${config["username"]}"/Desktop/rtl8821ce                
+echo "blacklist rtw88_8821ce" | sudo tee /etc/modprobe.d/blacklist.conf
+EOF
 
-                if [[ $? -ne 0 ]]; then
-                    break
-                fi
-
-                rm -r /mnt/home/"${config["username"]}"/rtl8821ce
-
-                if [[ $? -ne 0 ]]; then
-                    break
-                fi
-
-                echo "blacklist rtw88_8821ce" > /mnt/etc/modprobe.d/blacklist.conf
+                chmod +x /mnt/home/"${config["username"]}"/Desktop/post_installation_script.sh                
             fi
 
             answer="$(question_boolean "Do You Want To Install Canon Printer Driver (cnrdrvcups-lb)? (y/n): ")"
             if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
-                arch-chroot /mnt paru -Syu cups cnrdrvcups-lb
-
-                if [[ $? -ne 0 ]]; then
-                    break
-                fi
-
-                arch-chroot /mnt systemctl enable cups
+                cat << EOF >> /mnt/home/"${config["username"]}"/Desktop/post_installation_script.sh
+paru -Syu cups cnrdrvcups-lb
+systemctl enable cups
+EOF
             fi
             ;;
         26)
             answer="$(question_boolean "Do You Want To Install Optimus Manager? (y/n): ")"
             if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
-                arch-chroot /mnt paru -Syu optimus-manager
-
-                if [[ $? -ne 0 ]]; then
-                    break
-                fi
+                cat << EOF >> /mnt/home/"${config["username"]}"/Desktop/post_installation_script.sh
+paru -Syu optimus-manager
+EOF
 
                 case "${config["desktop_environment"]}" in
                 KDE)
-                    arch-chroot /mnt paru -Syu optimus-manager-qt
+                    cat << EOF >> /mnt/home/"${config["username"]}"/Desktop/post_installation_script.sh
+paru -Syu optimus-manager-qt
+EOF
                     ;;
                 GNOME)
                     ;;
@@ -563,11 +558,16 @@ while [[ true ]]; do
         27)
             print_title "Installing Some Useful Applications"
             
-            arch-chroot /mnt paru -Syu ${config["useful_packages"]} 
+            arch-chroot /mnt pacman -Syu ${config["useful_packages"]} --needed
 
             if [[ $? -ne 0 ]]; then
                 break
             fi
+
+            cat << EOF >> /mnt/home/"${config["username"]}"/Desktop/post_installation_script.sh
+paru -Syu visual-studio-code-bin --needed
+EOF
+	    chown -R 1000:1000 "/mnt/home/${config["username"]}/Desktop/post_installation_script.sh"
 
             arch-chroot -u "${config["username"]}" /mnt mkdir -p /home/"${config["username"]}"/Applications/
             
@@ -575,36 +575,36 @@ while [[ true ]]; do
                 break
             fi
 
-            arch-chroot -u "${config["username"]}" /mnt curl "https://github.com/zen-browser/desktop/releases/latest/download/zen-x86_64.AppImage" -o "/home/"${config["username"]}"/Applications/zen-x86_64.AppImage"
+            arch-chroot -u "${config["username"]}" /mnt aria2c --continue=true "https://github.com/zen-browser/desktop/releases/latest/download/zen-x86_64.AppImage" -d "/home/"${config["username"]}"/Applications"
 
             if [[ $? -ne 0 ]]; then
                 break
             fi
 
-            arch-chroot -u "${config["username"]}" /mnt curl "https://github.com/johannesjo/super-productivity/releases/latest/download/superProductivity-x86_64.AppImage" -o "/home/"${config["username"]}"/Applications/superProductivity-x86_64.AppImage"
+            arch-chroot -u "${config["username"]}" /mnt aria2c --continue=true "https://github.com/johannesjo/super-productivity/releases/latest/download/superProductivity-x86_64.AppImage" -d "/home/"${config["username"]}"/Applications"
 
             if [[ $? -ne 0 ]]; then
                 break
             fi
 
-            arch-chroot -u "${config["username"]}" /mnt curl "https://github.com/mattermost-community/focalboard/releases/download/v7.10.6/focalboard-linux.tar.gz" -o "/home/"${config["username"]}"/Applications/focalboard-linux.tar.gz"
+            arch-chroot -u "${config["username"]}" /mnt aria2c --continue=true "https://github.com/mattermost-community/focalboard/releases/download/v7.10.6/focalboard-linux.tar.gz" -d "/home/"${config["username"]}"/Applications"
 
             if [[ $? -ne 0 ]]; then
                 break
             fi
 
-            arch-chroot -u "${config["username"]}" /mnt curl "https://github.com/hiddify/hiddify-app/releases/latest/download/Hiddify-Linux-x64.AppImage" -o "/home/"${config["username"]}"/Applications/Hiddify-Linux-x64.AppImage"
+            arch-chroot -u "${config["username"]}" /mnt aria2c --continue=true "https://github.com/hiddify/hiddify-app/releases/latest/download/Hiddify-Linux-x64.AppImage" -d "/home/"${config["username"]}"/Applications"
 
             if [[ $? -ne 0 ]]; then
                 break
             fi
 
-            arch-chroot -u "${config["username"]}" /mnt curl "https://github.com/bepass-org/oblivion-desktop/releases/latest/download/oblivion-desktop-linux-x86_64.AppImage" -o "/home/"${config["username"]}"/Applications/oblivion-desktop-linux-x86_64.AppImage"
+            arch-chroot -u "${config["username"]}" /mnt aria2c --continue=true "https://github.com/bepass-org/oblivion-desktop/releases/latest/download/oblivion-desktop-linux-x86_64.AppImage" -d "/home/"${config["username"]}"/Applications"
             ;;
         28)
             print_title "Installation Finished!"
 
-            umount -l /mnt
+            umount -R /mnt
 
             break
             ;;
