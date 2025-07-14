@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="v0.1.6" 
+VERSION="v0.1.7" 
 
 declare -A config
 
@@ -516,8 +516,8 @@ while [[ true ]]; do
                 cat << EOF > /mnt/home/"${config["username"]}"/Desktop/post_installation_script.sh
 #!/bin/bash
 cd /home/"${config["username"]}"/Desktop/rtl8821ce
-./dkms-remove.sh
-./dkms-install.sh
+sudo ./dkms-remove.sh
+sudo ./dkms-install.sh
 sudo rm -r /home/"${config["username"]}"/Desktop/rtl8821ce                
 echo "blacklist rtw88_8821ce" | sudo tee /etc/modprobe.d/blacklist.conf
 EOF
