@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="v0.1.10" 
+VERSION="v0.1.11" 
 
 declare -A config
 
@@ -498,6 +498,8 @@ while [[ true ]]; do
             ;;
         25)
             print_title "Optional Step (Printer & Wifi Driver Installation)"
+
+            mkdir -p /mnt/home/"${config["username"]}"/Desktop
 
             cat << EOF > /mnt/home/"${config["username"]}"/Desktop/post_installation_script.sh
 #!/bin/bash
