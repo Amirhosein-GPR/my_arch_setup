@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="v0.1.9" 
+VERSION="v0.1.10" 
 
 declare -A config
 
@@ -499,6 +499,9 @@ while [[ true ]]; do
         25)
             print_title "Optional Step (Printer & Wifi Driver Installation)"
 
+            cat << EOF > /mnt/home/"${config["username"]}"/Desktop/post_installation_script.sh
+#!/bin/bash
+EOF
             answer="$(question_boolean "Do You Want To Install RTL8821CE Driver? (y/n): ")"
             if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
                 arch-chroot /mnt sudo pacman -Syu linux-headers dkms bc --needed
@@ -513,8 +516,7 @@ while [[ true ]]; do
                     break
                 fi
 
-                cat << EOF > /mnt/home/"${config["username"]}"/Desktop/post_installation_script.sh
-#!/bin/bash
+                cat << EOF >> /mnt/home/"${config["username"]}"/Desktop/post_installation_script.sh
 cd /home/"${config["username"]}"/Desktop/rtl8821ce
 sudo ./dkms-remove.sh
 sudo ./dkms-install.sh
