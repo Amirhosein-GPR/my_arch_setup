@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="v0.1.11" 
+VERSION="v0.1.12" 
 
 declare -A config
 
