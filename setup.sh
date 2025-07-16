@@ -501,6 +501,8 @@ while [[ true ]]; do
 
             mkdir -p /mnt/home/"${config["username"]}"/Desktop
 
+            chown -R 1000:1000 "/mnt/home/${config["username"]}/Desktop
+
             cat << EOF > /mnt/home/"${config["username"]}"/Desktop/post_installation_script.sh
 #!/bin/bash
 EOF
